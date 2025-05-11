@@ -1,4 +1,4 @@
-Wiki Assist
+# Wiki Assist
 
 Try out here:
 
