@@ -8,5 +8,5 @@ Try out here:
 ```bash
 git clone https://github.com/rum1887/wiki_assist
 cd wiki_assist
-pip install -r  requirements.text
+pip install -r  requirements.txt
 ```
