@@ -6,7 +6,7 @@ Try out here:
 ### 1. Project Setup
 
 ```bash
-npx create-react-app frontend
-cd frontend
-npm install @mui/material @emotion/react @emotion/styled @mui/icons-material axios jwt-decode react-router-dom
+git clone https://github.com/rum1887/wiki_assist
+cd wiki_assist
+pip install -r  requirements.text
 ```
