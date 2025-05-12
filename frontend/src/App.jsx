@@ -1,96 +1,69 @@
-// import React, { useState } from "react";
-// import axios from "axios";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 
-// const SearchWikipedia = () => {
-//     const [query, setQuery] = useState("");
-//     const [results, setResults] = useState([]);
-//     const [suggestions, setSuggestions] = useState([]);
-    
-//     const handleInputChange = async (event) => {
-//         const queryValue = event.target.value;
-//         setQuery(queryValue);
-        
-//         if (queryValue.length < 3) {
-//             setSuggestions([]);
-//             return;
-//         }
+// Pages
+import Login from './components/Login';
+import Register from './components/Register';
+import Dashboard from './components/Dashboard';
+import SavedArticles from './components/savedArticles';
 
-//         try {
-//             const response = await axios.get("/search/", { params: { query: queryValue, limit: 5 } });
-//             setSuggestions(response.data);
-//         } catch (error) {
-//             console.error("Error fetching autocomplete suggestions:", error);
-//         }
-//     };
+// Define theme
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#dc004e',
+    },
+  },
+});
 
-//     const handleSelectSuggestion = (title) => {
-//         setQuery(title);
-//         fetchSearchResults(title);
-//         setSuggestions([]); // Hide suggestions
-//     };
-
-//     const fetchSearchResults = async (searchQuery) => {
-//         try {
-//             const response = await axios.get("/search/", { params: { query: searchQuery, limit: 5 } });
-//             setResults(response.data);
-//         } catch (error) {
-//             console.error("Error fetching search results:", error);
-//         }
-//     };
-
-//     return (
-//         <div>
-//             <input type="text" placeholder="Search Wikipedia..." value={query} onChange={handleInputChange} />
-            
-//             {/* Autocomplete Dropdown */}
-//             {suggestions.length > 0 && (
-//                 <ul>
-//                     {suggestions.map((item) => (
-//                         <li key={item.pageid} onClick={() => handleSelectSuggestion(item.title)}>
-//                             {item.title}
-//                         </li>
-//                     ))}
-//                 </ul>
-//             )}
-
-//             {/* Search Results */}
-//             <div>
-//                 {results.map((item) => (
-//                     <p key={item.pageid}>
-//                         <a href={`https://en.wikipedia.org/wiki/${encodeURIComponent(item.title)}`} target="_blank" rel="noopener noreferrer">
-//                             {item.title}
-//                         </a>
-//                     </p>
-//                 ))}
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default SearchWikipedia;
-
-import React, { useState } from "react";
-import SearchWikipedia from "./components/SearchWiki";
-import SavedArticles from "./components/savedArticles";
-
-const App = () => {
-    const [SavedArticles, setSavedArticles] = useState([]);
-
-    const handleSaveArticle = (article) => {
-        const category = prompt("Enter category for this article:");
-        if (category) {
-            setSavedArticles([...SavedArticles, { ...article, category }]);
-        }
-    };
-
-    return (
-        <div>
-            <h1>Wikipedia Search</h1>
-            <SearchWikipedia onSave={handleSaveArticle} />
-            <SavedArticles SavedArticles={SavedArticles} />
-        </div>
-    );
+// Protected route component
+const ProtectedRoute = ({ children }) => {
+  const { isAuthenticated } = useAuth();
+  
+  if (!isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
+  
+  return children;
 };
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <AuthProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route 
+              path="/" 
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/saved" 
+              element={
+                <ProtectedRoute>
+                  <SavedArticles />
+                </ProtectedRoute>
+              } 
+            />
+          </Routes>
+        </Router>
+      </AuthProvider>
+    </ThemeProvider>
+  );
+}
 
 export default App;
 

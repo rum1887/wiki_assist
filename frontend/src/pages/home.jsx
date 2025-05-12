@@ -1,0 +1,1 @@
+// will have the NavBar component, Searchbar component,and the Wikipedia Article Card components
